@@ -285,7 +285,7 @@ func (p *Parser) evaluate(tok *Token) (float64, error) {
 
 func (p *Parser) evaluateFunc(tok *Token) (float64, error) {
 	var (
-		function *function
+		function *Function
 		ok       bool
 		i        int
 	)
@@ -294,13 +294,13 @@ func (p *Parser) evaluateFunc(tok *Token) (float64, error) {
 		return -1, fmt.Errorf("Undefined function ‘%s’", tok)
 	}
 
-	if arity := p.arity.Pop().(int); arity != function.arity {
-		return -1, fmt.Errorf("Invalid argument count for ‘%s’ (expected %d, got %d)", tok, function.arity, arity)
+	if arity := p.arity.Pop().(int); arity != function.Arity {
+		return -1, fmt.Errorf("Invalid argument count for ‘%s’ (expected %d, got %d)", tok, function.Arity, arity)
 	}
 
 	// Start popping off arguments for the function call
-	args := make([]float64, function.arity)
-	for i = function.arity - 1; i >= 0; i-- {
+	args := make([]float64, function.Arity)
+	for i = function.Arity - 1; i >= 0; i-- {
 		if p.operands.Empty() {
 			return -1, ErrMisplacedComma
 		}
@@ -313,7 +313,7 @@ func (p *Parser) evaluateFunc(tok *Token) (float64, error) {
 		args[i] = arg
 	}
 
-	return function.fn(args), nil
+	return function.Fn(args), nil
 }
 
 func (p *Parser) evaluateOp(operator *Token) (float64, error) {
